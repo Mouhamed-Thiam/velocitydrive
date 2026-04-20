@@ -1,0 +1,76 @@
+/* ========== VARIABLES & RESET ========== */
+:root {
+  --primary: #0d6efd;
+  --transition: 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 70px;
+}
+
+body {
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ========== HERO ========== */
+.hero-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* ========== FEATURE CARDS ========== */
+.feature-card {
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 1rem 2rem rgba(0,0,0,0.1) !important;
+}
+.feature-card i {
+  transition: transform 0.2s;
+}
+.feature-card:hover i {
+  transform: scale(1.05);
+}
+
+/* ========== CARDS VOITURES ========== */
+.card {
+  transition: all 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -12px rgba(0,0,0,0.2) !important;
+}
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.card:hover .card-img-top {
+  transform: scale(1.02);
+}
+
+/* ========== FORMULAIRE ========== */
+.contact-section .card {
+  background: white;
+}
+#contactForm .form-control:focus, 
+#contactForm .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .hero-section .display-4 {
+    font-size: 2rem;
+  }
+  .card-img-top {
+    height: 160px;
+  }
+}
