@@ -8,7 +8,6 @@
 (function() {
   'use strict';
 
-<<<<<<< HEAD
   // ========== EMAILJS CONFIGURATION (REPLACE WITH YOUR OWN VALUES) ==========
   const EMAILJS_PUBLIC_KEY = '0Jq4Z-F7K0NZyurEu';          // e.g., 'user_abc123'
   const EMAILJS_SERVICE_ID  = 'service_ljq5big';         // e.g., 'service_gmail'
@@ -20,15 +19,6 @@
   const AUTO_REPLY_TEMPLATE_ID = 'template_lgfxc6q';
 
   const ADMIN_EMAIL = 'th1933238@gmail.com';
-=======
-  // ========== CONFIGURATION EMAILJS (À REMPLACER PAR VOS IDENTIFIANTS) ==========
-  const EMAILJS_PUBLIC_KEY = 'VOTRE_PUBLIC_KEY';     // ex: 'user_abc123'
-  const EMAILJS_SERVICE_ID  = 'VOTRE_SERVICE_ID';    // ex: 'service_gmail'
-  const ADMIN_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';   // ex: 'template_contact'
-  const AUTO_REPLAY_TEMPLE_ID = 'VOTRE_TEMPLATE_AUTO_REPLY_ID'
-  // Destinataire fixe (votre email)
-  const RECIPIENT_EMAIL = 'th1933238@gmail.com';
->>>>>>> 30f0434190ab0f2db1316aa4a61c33628b7c70ee
 
   document.addEventListener('DOMContentLoaded', function() {
     emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -146,18 +136,10 @@
         reply_to: email,          // customer's email address
         to_email: ADMIN_EMAIL     // so they can reply to you
       };
-      // Paramètres pour l'auto-reply (au client)
-      const autoReplyParams = {
-        name: fullName,
-        car_model: carModel || 'non spécifié',
-        reply_to: email,
-        // Vous pouvez ajouter d'autres variables si votre template les utilise
-      };
 
       setLoading(true);
 
       try {
-<<<<<<< HEAD
         // 1. Send email to admin (template "Contact Us")
         await emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams);
         
@@ -167,16 +149,6 @@
         showFeedback('✅ Your request has been sent! A confirmation email has been sent to you.', false);
         form.reset();
         resetValidation();
-=======
-         // 1. Envoi à l'administrateur
-        await emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams);
-        
-        // 2. Envoi de l'auto-reply au client
-        await emailjs.send(EMAILJS_SERVICE_ID, AUTO_REPLY_TEMPLATE_ID, autoReplyParams);
-        showFeedback('✅ Votre demande a bien été envoyée ! Un email de confirmation vous a été adressé.', false);
-        form.reset();               // vide le formulaire
-        resetValidation();          // enlève les coches vertes
->>>>>>> 30f0434190ab0f2db1316aa4a61c33628b7c70ee
       } catch (error) {
         console.error('EmailJS error:', error);
         let errorMsg = '❌ Failed to send your request. Please check your internet connection and try again.';
@@ -197,5 +169,7 @@
         }
       });
     });
+  });
+})();
   });
 })();
