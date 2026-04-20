@@ -1,22 +1,26 @@
 /**
- * VelocityDrive – Formulaire de contact avec EmailJS
- * Envoie les données vers th1933238@gmail.com
- * Variables du template : title, name, time, message, from_name, reply_to
+ * VelocityDrive – Contact Form with EmailJS
+ * Sends exactly the parameters expected by the user's templates:
+ * - Admin template "Contact Us": title, from_name, car_model, time, message, to_email, reply_to
+ * - Auto-reply template "Auto-Reply": from_name, car_model, reply_to, to_email
  */
 
 (function() {
   'use strict';
 
-  // ========== CONFIGURATION EMAILJS (À REMPLACER PAR VOS IDENTIFIANTS) ==========
-  const EMAILJS_PUBLIC_KEY = 'VOTRE_PUBLIC_KEY';     // ex: 'user_abc123'
-  const EMAILJS_SERVICE_ID  = 'VOTRE_SERVICE_ID';    // ex: 'service_gmail'
-  const EMAILJS_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';   // ex: 'template_contact'
+  // ========== EMAILJS CONFIGURATION (REPLACE WITH YOUR OWN VALUES) ==========
+  const EMAILJS_PUBLIC_KEY = '0Jq4Z-F7K0NZyurEu';          // e.g., 'user_abc123'
+  const EMAILJS_SERVICE_ID  = 'service_ljq5big';         // e.g., 'service_gmail'
 
-  // Destinataire fixe (votre email)
-  const RECIPIENT_EMAIL = 'th1933238@gmail.com';
+  // Template ID for admin email (named "Contact Us" in your screenshot)
+  const ADMIN_TEMPLATE_ID = 'template_pxmzqi5';
+
+  // Template ID for auto-reply email (named "Auto-Reply" in your screenshot)
+  const AUTO_REPLY_TEMPLATE_ID = 'template_lgfxc6q';
+
+  const ADMIN_EMAIL = 'th1933238@gmail.com';
 
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser EmailJS
     emailjs.init(EMAILJS_PUBLIC_KEY);
 
     const form = document.getElementById('contactForm');
@@ -26,25 +30,23 @@
 
     if (!form) return;
 
-    // Afficher un message à l'utilisateur
     function showFeedback(message, isError = true) {
       feedbackDiv.innerHTML = `<div class="alert alert-${isError ? 'danger' : 'success'} alert-dismissible fade show" role="alert">
                                   ${message}
-                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>`;
       feedbackDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Gérer l'état du bouton (loading)
     function setLoading(isLoading) {
       if (!submitBtn) return;
       submitBtn.disabled = isLoading;
       submitBtn.innerHTML = isLoading
-        ? '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Envoi en cours...'
+        ? '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Sending...'
         : originalBtnText;
     }
 
-    // Validation d'un champ (Bootstrap)
+    // Validation helpers
     function validateField(field) {
       let isValid = true;
       const value = field.value.trim();
@@ -69,7 +71,6 @@
       return isValid;
     }
 
-    // Valider tout le formulaire
     function validateForm() {
       let valid = true;
       ['fullName', 'emailAddress', 'messageText'].forEach(id => {
@@ -79,82 +80,90 @@
       return valid;
     }
 
-    // Réinitialiser les styles de validation
     function resetValidation() {
       document.querySelectorAll('.form-control, .form-select').forEach(f => {
         f.classList.remove('is-valid', 'is-invalid');
       });
     }
 
-    // --- SOUMISSION DU FORMULAIRE ---
+    // ----- FORM SUBMIT -----
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
       feedbackDiv.innerHTML = '';
       resetValidation();
 
       if (!validateForm()) {
-        showFeedback('⚠️ Veuillez remplir correctement tous les champs obligatoires (nom, email valide, message d’au moins 5 caractères).');
+        showFeedback('⚠️ Please fill all required fields correctly (name, valid email, message at least 5 characters).');
         const firstInvalid = form.querySelector('.is-invalid');
         if (firstInvalid) firstInvalid.focus();
         return;
       }
 
-      // Récupération des valeurs
       const fullName = document.getElementById('fullName').value.trim();
       const email = document.getElementById('emailAddress').value.trim();
-      const carModel = document.getElementById('carModelSelect').value;
+      const carModel = document.getElementById('carModelSelect').value || 'Not specified';
       const userMessage = document.getElementById('messageText').value.trim();
 
-      // Date et heure actuelles (format lisible)
+      // Current date and time for admin email
       const now = new Date();
-      const formattedTime = now.toLocaleString('fr-FR', {
-        dateStyle: 'full',
-        timeStyle: 'short'
+      const formattedTime = now.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
       });
 
-      // Construction du message complet (modèle choisi + texte)
-      let finalMessage = userMessage;
-      if (carModel && carModel !== '') {
-        finalMessage = `Modèle souhaité : ${carModel}\n\n${userMessage}`;
-      }
-
-      // Paramètres exacts pour votre template EmailJS
-      const templateParams = {
-        title: `Demande de contact - ${fullName}`,   // sera utilisé dans le sujet
-        name: fullName,
-        time: formattedTime,
-        message: finalMessage,
+      // ----- Admin email parameters (template "Contact Us") -----
+      // Expected: title, from_name, car_model, time, message, to_email, reply_to
+      const adminParams = {
+        title: `Inquiry from ${fullName}`,           // used in subject: "Contact Us: {{title}}"
         from_name: fullName,
-        reply_to: email,
-        to_email: RECIPIENT_EMAIL   // même si votre template utilise "To Email" fixe, on le précise
+        car_model: carModel,
+        time: formattedTime,
+        message: userMessage,
+        to_email: ADMIN_EMAIL,
+        reply_to: email
+      };
+
+      // ----- Auto-reply parameters (template "Auto-Reply") -----
+      // Expected: from_name, car_model, reply_to, to_email
+      const autoReplyParams = {
+        from_name: fullName,
+        car_model: carModel,
+        reply_to: email,          // customer's email address
+        to_email: ADMIN_EMAIL     // so they can reply to you
       };
 
       setLoading(true);
 
       try {
-        const response = await emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_TEMPLATE_ID,
-          templateParams
-        );
-        console.log('Email envoyé avec succès :', response);
-        showFeedback('✅ Votre demande a bien été envoyée ! Nous vous répondrons sous 24h.', false);
-        form.reset();               // vide le formulaire
-        resetValidation();          // enlève les coches vertes
+        // 1. Send email to admin (template "Contact Us")
+        await emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams);
+        
+        // 2. Send auto-reply to customer (template "Auto-Reply")
+        await emailjs.send(EMAILJS_SERVICE_ID, AUTO_REPLY_TEMPLATE_ID, autoReplyParams);
+
+        showFeedback('✅ Your request has been sent! A confirmation email has been sent to you.', false);
+        form.reset();
+        resetValidation();
       } catch (error) {
-        console.error('Erreur EmailJS :', error);
-        showFeedback('❌ Échec de l\'envoi. Vérifiez votre connexion ou réessayez plus tard.');
+        console.error('EmailJS error:', error);
+        let errorMsg = '❌ Failed to send your request. Please check your internet connection and try again.';
+        if (error.text) console.error('EmailJS details:', error.text);
+        showFeedback(errorMsg);
       } finally {
         setLoading(false);
       }
     });
 
-    // Validation en temps réel pendant la saisie
+    // Real-time validation
     const allFields = form.querySelectorAll('input, textarea, select');
     allFields.forEach(field => {
       field.addEventListener('input', function() {
         validateField(this);
-        // Efface l'alerte d'erreur dès que l'utilisateur commence à corriger
         if (feedbackDiv.querySelector('.alert-danger')) {
           feedbackDiv.innerHTML = '';
         }

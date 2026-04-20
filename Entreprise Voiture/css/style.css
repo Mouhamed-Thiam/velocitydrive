@@ -1,4 +1,4 @@
-/* ========== VARIABLES & RESET ========== */
+/* ========== GLOBAL STYLES & VARIABLES ========== */
 :root {
   --primary: #0d6efd;
   --transition: 0.3s ease;
@@ -10,16 +10,15 @@ html {
 }
 
 body {
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   overflow-x: hidden;
 }
 
-/* ========== HERO ========== */
 .hero-section {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-/* ========== FEATURE CARDS ========== */
 .feature-card {
   transition: transform var(--transition), box-shadow var(--transition);
 }
@@ -34,9 +33,8 @@ body {
   transform: scale(1.05);
 }
 
-/* ========== CARDS VOITURES ========== */
 .card {
-  transition: all 0.25s ease;
+  transition: all 0.25s ease-in-out;
 }
 .card:hover {
   transform: translateY(-8px);
@@ -50,27 +48,29 @@ body {
 .card:hover .card-img-top {
   transform: scale(1.02);
 }
-
-/* ========== FORMULAIRE ========== */
-.contact-section .card {
-  background: white;
+.card-footer .btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: white;
 }
+
 #contactForm .form-control:focus, 
 #contactForm .form-select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
 }
-.was-validated .form-control:invalid,
 .form-control.is-invalid {
   border-color: #dc3545;
 }
 
-/* ========== RESPONSIVE ========== */
+footer a {
+  transition: color 0.2s;
+}
+footer a:hover {
+  color: white !important;
+  text-decoration: underline !important;
+}
+
 @media (max-width: 768px) {
-  .hero-section .display-4 {
-    font-size: 2rem;
-  }
-  .card-img-top {
-    height: 160px;
-  }
+  .hero-section .display-4 { font-size: 2rem; }
+  .card-img-top { height: 160px; }
 }
