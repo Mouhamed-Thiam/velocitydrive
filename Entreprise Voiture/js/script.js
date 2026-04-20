@@ -10,8 +10,8 @@
   // ========== CONFIGURATION EMAILJS (À REMPLACER PAR VOS IDENTIFIANTS) ==========
   const EMAILJS_PUBLIC_KEY = 'VOTRE_PUBLIC_KEY';     // ex: 'user_abc123'
   const EMAILJS_SERVICE_ID  = 'VOTRE_SERVICE_ID';    // ex: 'service_gmail'
-  const EMAILJS_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';   // ex: 'template_contact'
-
+  const ADMIN_TEMPLATE_ID = 'VOTRE_TEMPLATE_ID';   // ex: 'template_contact'
+  const AUTO_REPLAY_TEMPLE_ID = 'VOTRE_TEMPLATE_AUTO_REPLY_ID'
   // Destinataire fixe (votre email)
   const RECIPIENT_EMAIL = 'th1933238@gmail.com';
 
@@ -128,17 +128,23 @@
         reply_to: email,
         to_email: RECIPIENT_EMAIL   // même si votre template utilise "To Email" fixe, on le précise
       };
+      // Paramètres pour l'auto-reply (au client)
+      const autoReplyParams = {
+        name: fullName,
+        car_model: carModel || 'non spécifié',
+        reply_to: email,
+        // Vous pouvez ajouter d'autres variables si votre template les utilise
+      };
 
       setLoading(true);
 
       try {
-        const response = await emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_TEMPLATE_ID,
-          templateParams
-        );
-        console.log('Email envoyé avec succès :', response);
-        showFeedback('✅ Votre demande a bien été envoyée ! Nous vous répondrons sous 24h.', false);
+         // 1. Envoi à l'administrateur
+        await emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams);
+        
+        // 2. Envoi de l'auto-reply au client
+        await emailjs.send(EMAILJS_SERVICE_ID, AUTO_REPLY_TEMPLATE_ID, autoReplyParams);
+        showFeedback('✅ Votre demande a bien été envoyée ! Un email de confirmation vous a été adressé.', false);
         form.reset();               // vide le formulaire
         resetValidation();          // enlève les coches vertes
       } catch (error) {
